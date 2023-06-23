@@ -34,8 +34,8 @@ services:
       kafka:
         condition: service_healthy
     command: >
-      bash -c "kafka-topics --create --topic NOVO_PEDIDO --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists
-      && kafka-topics --create --topic CONFIRMACAO_PEDIDO --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists"
+      bash -c "kafka-topics --create --topic NOVO_PEDIDO --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --if-not-exists
+      && kafka-topics --create --topic CONFIRMACAO_PEDIDO --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --if-not-exists"
 
   sql-server:
     image: mcr.microsoft.com/mssql/server:latest
@@ -81,6 +81,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__ClientesDb=Server=host.docker.internal;Database=DB_CLIENTES;TrustServerCertificate=True;User=sa;Password=Password123!
       - ConnectionStrings__Kafka=kafka:29092
+    deploy:
+      mode: replicated
+      replicas: 3
 
   shopzilla-estoque:
     image: shopzilla-estoque:latest
@@ -93,3 +96,6 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__EstoqueDb=Server=host.docker.internal;Database=DB_ESTOQUE;TrustServerCertificate=True;User=sa;Password=Password123!
       - ConnectionStrings__Kafka=kafka:29092
+    deploy:
+      mode: replicated
+      replicas: 3
